@@ -135,10 +135,9 @@ func (cfg *apiConfig) handlerUploadVideo(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Correct the Sprintf format string: use https:// and add / before fileKey
-	newVideoURL := fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", cfg.s3Bucket, cfg.s3Region, fileKey)
-
-	metaDataVideo.VideoURL = &newVideoURL
+	// Store CloudFront URL instead of bucket and key
+	videoLocation := fmt.Sprintf("https://%s/%s", cfg.s3CfDistribution, fileKey)
+	metaDataVideo.VideoURL = &videoLocation
 
 	err = cfg.db.UpdateVideo(metaDataVideo)
 	if err != nil {
